@@ -34,7 +34,7 @@ For ease of use of all of these scripts, we will provide an example for a basic 
 some functions for those interested in constructing SEDs.
 
 ### Step 1:
-- **Understand how mw_gp.py works**
+**Understand how mw_gp.py works**
   - This entire function is built around the scikit-learn implementation of a Gaussian process regression algorithm. For more details
     please refer to the documentation before proceeding: 
     https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessRegressor.html
@@ -62,8 +62,8 @@ some functions for those interested in constructing SEDs.
     Once can choose to obtain just (ii), just (i) and (iii), or all three.
 
 ### Step 2:
-- **Perform your photometric predictions** 
-  - In `example.py` we provide basic sample code to perform a a photometric prediction for Milky Way restframe (g-r) color using 
+**Perform your photometric predictions** 
+  - In `example.py` we provide basic sample code to perform a photometric prediction for Milky Way restframe (g-r) color using 
     three parameters: stellar mass, star formation rate, and axis ratio.
   - Line 7-8 reads in the catalog which contains all of your galaxies. 
   - Line 10 makes the equivalent of (1) in Step 1, or the `galaxies`read into `single_predictor_mw_gp()`. 
@@ -77,7 +77,13 @@ One could stop here if systematics are not a concern. However, if they are we pr
 those interested in addressing Eddington bias. If not please procees to Step 4.
 
 ### Step 3 (optional):
-- **Perform Eddington bias calculations**
+**Perform Eddington bias calculations**
+  - In `example_eddbias.py` we provide basid sample code to perform an Eddington bias calculation for (g-r) color using three
+    parameters: stellar mass, star formation rate, and axis ratio.
+  - This code is very similar to `example.py`. Here the function `calc_gp_eddbias.py` is called which has a function that uses `gp_eddbias.py`
+    in order to calculate Eddington bias for a given photometric band. 
+  - The saved output can be subtracted off of the mean photometric prediction in order to have an Eddington bias corrected prediction for 
+    your photometric band.
   
 ### Step 4:
 - **Estimate an SED**
