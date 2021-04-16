@@ -52,8 +52,6 @@ def single_predictor_mw_gp_prediction(
 
     Returns:
         A single prediction and standard deviation (floats) based on the actual MW values.
-            
-
     """
     n_params = int(len(list(mw)))
     #Initiate the kernel used for the GP
