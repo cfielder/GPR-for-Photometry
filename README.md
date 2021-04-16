@@ -86,8 +86,14 @@ those interested in addressing Eddington bias. If not please procees to Step 4.
     your photometric band.
   
 ### Step 4:
-- **Estimate an SED**
-
+**Estimate an SED**
+  - The code in `example_sed.py` provides sample calculations to produce an SED. We provide SDSS r band and GALEX FUV but this method can be
+    extracted to more bands.
+  - This code calls in conviennce functions in `sed_functions.py`. These calculation fractional flux which is then used to calculate luminosity, and 
+    respective errors.
+  - These calculations are then saved as a dataframe. To plot an SED like that presented in Fielder et al. 2021 one would simply do the following:
+    `plt.errorbar(sed_df["filter_value"],sed_df["nu_Lnu"],yerr=sed_df["error"],markeredgecolor="black",`
+             `markerfacecolor="white", ecolor="black",fmt='o')`
 
 
 ## Authors
