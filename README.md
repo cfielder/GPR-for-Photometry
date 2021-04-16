@@ -1,7 +1,7 @@
 # GPR-for-Photometry
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![astropy](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
-![GitHub last commit](https://img.shields.io/github/last-commit/cfielder/Milky-Way-Analogs.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/cfielder/GPR-for-Photometry.svg)
 
 This hosts the essential GPR code for predicting photometry for the Milky Way, utilised in Fielder et al. 2021.
 
