@@ -26,31 +26,31 @@ filters = np.array([0.155,0.622])#In micrometer
 c = 3e8 #m/s
 nu = c/(filters*1e-6) #In Hz
 
-L_r = 10.**((np.mean(pred_Mr)-np.mean(bias_means_Mr)-34.04)/(-2.5)) #In W/Hz
-L_r_bias = 10.**((np.mean(pred_Mr)-34.04)/(-2.5))
+#Calculate fraction flux and luminosity
+log_L_r = log_lum_r((np.mean(pred_Mr)-np.mean(bias_means_Mr))) #In W/Hz
 
-frac_fuv = frac_flux(np.mean(pred_fuvmr)-np.mean(bias_means_FUVmr))
-L_fuv = lum(frac_fuv,L_r)
-frac_fuv_bias = frac_flux(np.mean(pred_fuvmr))
-L_fuv_bias = lum(frac_fuv_bias,L_r_bias)
+log_frac_fuv = log_frac_flux(np.mean(pred_fuvmr)-np.mean(bias_means_FUVmr))
+log_L_fuv = log_lum_non_r(log_frac_fuv,log_L_r)
 
-Ls = np.array([L_fuv,L_r])
-Lnu = Ls*nu
-Ls_bias = np.array([L_fuv_bias,L_r_bias])
-Lnu_bias = Ls_bias*nu
+#Convert to array and make nuLnu
+log_Ls = np.array([log_L_fuv,log_L_r])
+log_nuLnu = log_Ls + np.log10(nu)
 
-fuv_err = calc_non_r_error(np.mean(pred_fuvmr)-np.mean(bias_means_FUVmr),np.sqrt(np.std(samples_fuvmr)**2+np.mean(bias_sigmas_FUVmr)**2),nu[0],L_r)
+#Calculate errors
+r_err_mag = np.sqrt(np.std(samples_Mr)**2+eddbias_error(bias_sigmas_Mr)**2)
+log_L_r_err = 0.4*r_err_mag #In W/Hz
 
-r_err = calc_r_error(np.mean(pred_Mr)-np.mean(bias_means_Mr),np.sqrt(np.std(samples_Mr)**2+np.mean(bias_sigmas_Mr)**2),nu[4])
-nuLnu_errors = np.array([fuv_err,r_err])
+FUVmr_err_mag = np.sqrt(np.std(samples_fuvmr)**2+eddbias_error(bias_sigmas_FUVmr)**2)
+log_L_fuv_err = calc_log_non_r_error(FUVmr_err_mag,r_err_mag)
 
-fuv_err_bias = calc_non_r_error(np.mean(pred_fuvmr),np.std(samples_fuvmr),nu[0],L_r_bias)
-r_err_bias = calc_r_error(np.mean(pred_Mr),np.std(samples_Mr),nu[4])
-
-bias_nuLnu_errors = np.array([fuv_err_bias,r_err_bias])
+#Put into arrays
+log_nuLnu_errors = np.array([log_L_fuv_err,log_L_r_err])
+mag_errors = np.array([FUVmr_err_mag,r_err_mag])
 
 filter_names=np.array(["FUV","r"])
 
-d = {'filter_value':filters,'nu':nu,'Lnu':Ls,'nu_Lnu':Lnu,"error":nuLnu_errors,'nu_Lnu_bias':Lnu_bias,"bias_error":bias_nuLnu_errors}
+#Make the dataframe
+d = {'filter_value':filters,'nu':nu,'log_Lnu':log_Ls,'log_nu_Lnu':log_nuLnu,"error_nuLnu":log_nuLnu_errors,
+     "mag_errors":mag_errors}
 sed_df = pd.DataFrame(data=d,index=filter_names)
 sed_df.to_pickle("SED_calculations.pkl")
