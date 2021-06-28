@@ -109,11 +109,12 @@ those interested in addressing Eddington bias. If not please procees to Step 4.
     extracted to more bands.
   - This code calls in conviennce functions in `sed_functions.py`. These calculation fractional flux which is then used to calculate luminosity, and 
     respective errors.
+  - All calculations are performed in log-space for ease and convenience. Therefore resulting luminosities are presented in log(nuLnu).
   - These calculations are then saved as a dataframe. To plot an SED like that presented in Fielder et al. 2021 one would simply do the following:
     ```
     plt.errorbar(sed_df["filter_value"],
-                  sed_df["nu_Lnu"],
-                  yerr=sed_df["error"],
+                  sed_df["log_nu_Lnu"],
+                  yerr=sed_df["error_nuLnu"],
                   markeredgecolor="black",
                   markerfacecolor="white", 
                   ecolor="black",
