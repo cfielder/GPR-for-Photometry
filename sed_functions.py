@@ -1,20 +1,19 @@
 import numpy as np
 #Calculate fractional flux density
-def frac_flux(color):
-    f = 10.**(color/-2.5)
-    return f
+def log_frac_flux(color):
+    log_f = color/-2.5
+    return log_f
 #Calculate luminosity
-def lum(fractional_flux, L_weight):
-    L = fractional_flux * L_weight
-    return L
-def se(predicted,n):
-    se = np.std(predicted)/np.sqrt(n)
-    return se
-def calc_r_error(Mr,sigma_Mr,nu):
-    partial_deriv = -3.80431e13*nu*np.exp(-0.921034*Mr)
-    sigma = np.sqrt(partial_deriv**2*(sigma_Mr)**2)
+def log_lum_r(Mr):
+    log_L = (Mr - 34.04)/(-2.5)
+    return log_L
+def log_lum_non_r(log_fractional_flux, log_L_r):
+    log_L = log_fractional_flux + log_L_r
+    return log_L
+def calc_log_non_r_error(sigma_color,sigma_mr):
+    sigma = 0.4*np.sqrt(sigma_color**2+sigma_mr**2)
     return sigma
-def calc_non_r_error(color,sigma_color,nu,L_r):
-    partial_deriv = -0.921304*nu*L_r*np.exp(-0.921034*color)
-    sigma = np.sqrt(partial_deriv**2*sigma_color**2)
-    return sigma
+
+def eddbias_error(sigma):
+    error = np.sqrt(np.sum(np.square(sigma))) / len(sigma)
+    return error

@@ -1,7 +1,6 @@
 import numpy as np
 import sklearn.gaussian_process as gp
 import pandas as pd
-import random
 
 def single_predictor_mw_gp_prediction(
         galaxies,
@@ -9,7 +8,7 @@ def single_predictor_mw_gp_prediction(
         predictor,
         mw_draw,
         sigma_galaxies = None,
-        rs = random.randint(1,1e4),
+        rs = None,
         noise_level = 0,
         downsample_n = 1500,
         sigma_cutoff = 12,
@@ -79,6 +78,10 @@ def single_predictor_mw_gp_prediction(
 
         if sigma_galaxies is not None and noise_level != 0:
             noisy_galaxies = noisy_galaxies.where(conditional).dropna(axis="index",how="any")
+
+    if rs is None:
+        rs = np.random.RandomState()
+
     #Downsampling for large samples
     if downsample:
         galaxies = galaxies.sample(n=downsample_n,random_state=rs,axis="index")
