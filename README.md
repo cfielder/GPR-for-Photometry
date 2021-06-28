@@ -28,7 +28,8 @@ galaxies to capture information from global trends between galaxy structural pro
 This allows us to predict an SED derived from photometric prediction based on the Milky Way's measured parameters.
 
 We also provide some code for determining systematics - specifically Eddington bias. For those interested in obtaining
-k-corrections please refer to Fielder et al. 2021.
+k-corrections please refer to Fielder et al. 2021. In addition we provide code for calculating derivates as described by
+Fielder et al. 2021.
 
 For ease of use of all of these scripts, we will provide an example for a basic photometric prediction. We also provide 
 some functions for those interested in constructing SEDs.
@@ -46,6 +47,9 @@ some functions for those interested in constructing SEDs.
     formation rate of your galaxy of interest, and then (3) will contain the photometric property you wish to predict, such as 
     (g-r) restframe color. 
     **NOTE** that the column names in (1) MUST match the column names in (2).
+  - `gp_model_only()`, the second function in `mw_gp.py` is used to return only a GPR model. This has uses for specific test cases
+     and analyses explored in the paper, such as those presented in Sect. 4.2.3, where we only want to train a photometric model
+     once, but query the model with multiple different galaxy structural parameters.
   - This algorithm is adapted for the method presented in Fielder et al. 2021. After the GPR has been defined on line 75-77, we
     restric the sample by a given sigma and downsample it. This is necessary such that the computer does not run out of memory 
     due to how the GPR scales.
@@ -83,9 +87,23 @@ those interested in addressing Eddington bias. If not please procees to Step 4.
   - This code is very similar to `example.py`. Here the function `calc_gp_eddbias.py` is called which has a function that uses `gp_eddbias.py`
     in order to calculate Eddington bias for a given photometric band. 
   - The saved output can be subtracted off of the mean photometric prediction in order to have an Eddington bias corrected prediction for 
-    your photometric band.
+    your photometric band. For example, subtract the mean of ```bias_means``` off of your mean predicted photometric property. Combine your photometric
+    estimate errors in quadrature with the ```bias_sigmas``` where your final Eddington bias sigma is computed as 
+    ```np.sqrt(np.sum(np.square(bias_sigmas))) / len(bias_sigmas)```
+    
+### Step 4 (optional):
+**Perform derivative calculations**
+  - Derivatives are useful calculations as the allow the photometry presented to be updated for values of Milky Way parameters that differ from the 
+    fiducial values used in Fielder et al. 2021 or, conversely, to correct for a re-calibration of extragalactic values.
+  - In `example_derivatives.py` we provide basid sample code to perform derivatives for (g-r) color using all 6 galaxy physical parameters.
+  - This code is very similar to `example.py`. Here the function `derivatives()` is called which has a function that uses `single_predictor_mw_gp()`
+    in order to calculate the derivatives. The `derivatives()` function fits models trained on each of 10 training sets. Then two offset 
+    and the fiducial Milky Way propertery is queried. For example in the case of star formation rate we would evaluate at 
+    (MW SFR - (1 sigma)/10), the MW SFR, and (MW SFR + (1 sigma)/10), while all other physical parameters are held at the fiducial Milky Way value. 
+    We then calculate the three-point Lagrangian derivative across these three points, yielding a final derivative for, in this example, (g-r) color
+    with respect to SFR. The average derivative s then computed as the average across all 10 training set models.
   
-### Step 4:
+### Step 5:
 **Estimate an SED**
   - The code in `example_sed.py` provides sample calculations to produce an SED. We provide SDSS r band and GALEX FUV but this method can be
     extracted to more bands.
@@ -101,6 +119,7 @@ those interested in addressing Eddington bias. If not please procees to Step 4.
                   ecolor="black",
                   fmt='o')
     ```
+   
 
 ## Authors
 
